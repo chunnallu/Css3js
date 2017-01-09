@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>css3js测试</title>
+    <script src="http://static.outsidelook.cn/js/lib/jquery/jquery-3.1.0.min.js"></script>
+    <script src="css3.js"></script>
+    <style>
+        .box{
+            width:100px;
+            height:10px;
+            position: relative;
+            background: #ccc;
+			border:1px solid #ccc;
+			margin:2px;
+        }
+        .box:hover{
+            border:2px dotted #ff0000;
+        }
+    </style>
+</head>
+<body>
+
+<script>
+    /**
+     * 创建dom
+     * @param num
+     */
+    function createBox(num){
+        var domFragment = document.createDocumentFragment();
+        var div = document.createElement("div");
+        div.setAttribute("class","box");
+        for(var i =0;i<num;i++){
+            domFragment.appendChild(div.cloneNode(true));
+        }
+        document.body.appendChild(domFragment);
+    }
+    createBox(100)
+</script>
+
+ <script>
+     var box = new CSS3('.box');
+     var x = 1;
+     var y = 0;
+	 function render(){
+         box.translate(x,y);
+		 requestAnimationFrame(render);
+     }
+	 render();
+	 
+	 //1.将增量方式，改成设置方式
+	 //2.坐标轴的方向还要调整
+     
+//     css3.rotate(30);
+//     css3.scale(1.5,2);
+//     var matrix1 = new Matrix3();
+//     var matrix2 = new Matrix3(
+//             [1,2,2,
+//              0,1,2,
+//              0,0,1]);
+//
+//     matrix1.multiply(matrix2);
+
+ </script>
+
+</body>
+</html>
