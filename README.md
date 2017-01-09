@@ -1,2 +1,2 @@
 # Css3js
-使用js操作css3
+jquery css3插件，目前支持rotate,translate,skew,scale等2D操作方法。
