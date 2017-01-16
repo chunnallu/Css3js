@@ -104,9 +104,10 @@ Matrix3.prototype.multiply = function(item){
  * @returns {Matrix3}
  */
 Matrix3.prototype.rotate = function(angle){
+    var rad = angle/180*Math.PI;
     var transformMatrix = new Matrix3([
-        Math.cos(angle),-Math.sin(angle),0,
-        Math.sin(angle),Math.cos(angle),0,
+        Math.cos(rad),-Math.sin(rad),0,
+        Math.sin(rad),Math.cos(rad),0,
         0,0,1
     ]);
     this.multiply(transformMatrix);
@@ -151,9 +152,11 @@ Matrix3.prototype.scale = function(x,y){
  * @returns {Matrix3}
  */
 Matrix3.prototype.skew = function(xAngle,yAngle){
+    var xRad = xAngle/180*Math.PI;
+    var yRad = yAngle/180*Math.PI;
     var transformMatrix = new Matrix3([
-        1,Math.tan(xAngle),0,
-        Math.tan(yAngle),1,0,
+        1,Math.tan(xRad),0,
+        Math.tan(yRad),1,0,
         0,0,1
     ]);
     this.multiply(transformMatrix);
