@@ -164,7 +164,7 @@ Matrix3.prototype.skew = function(xAngle,yAngle){
 
 Matrix3.prototype.toTansformString = function(){
     var matrix = this.matrix;
-    var str = "matrix("+matrix[0]+","+matrix[1]+", "+matrix[3]+","+matrix[4]+", "+matrix[2]+","+matrix[5]+")"
+    var str = "matrix("+matrix[0]+","+matrix[3]+", "+matrix[1]+","+matrix[4]+", "+matrix[2]+","+matrix[5]+")"
     return str;
 }
 
@@ -201,8 +201,8 @@ function getDOMElementTransformMatrix(dom){
         matrix[i] = +v;
     });
     return [
-        matrix[0],matrix[1],matrix[4],
-        matrix[2],matrix[3],matrix[5],
+        matrix[0],matrix[2],matrix[4],
+        matrix[1],matrix[3],matrix[5],
         0,0,1
     ];
 }
