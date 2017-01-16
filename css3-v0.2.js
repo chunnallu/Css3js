@@ -1,6 +1,11 @@
 /**
- * Created by Administrator on 2017/1/6.
+ * Created by lcl on 2017/1/6.
  */
+
+
+/*************************************************************************
+ *  扩展jquery，提供变换接口
+ *************************************************************************/
 
 /*****
  * 检查是否存在Jquery
@@ -8,14 +13,19 @@
 if(!($ || jQuery)){
     throw "jQuery没有引入"
 }
+
 /**
- * 主对象
- * @constructor
+ * 初始化所选jquery dom对象，在第一次用到本插件提供的方法时运行本方法
+ * @param dom jquery dom对象，例如，$('#id')所选中的对象
+ * @returns {*} 返回包装后的对象
  */
 function initElement(dom){
     if(dom.matrix3){ //元素已经初始化过
         return;
     }
+    /*
+    根据情况，初始化矩阵，用3维矩阵表示元素的2D变换，用4维矩阵表示元素的3D变换
+     */
     var transformMatrix = getDOMElementTransformMatrix(dom);
     if(transformMatrix.length >0 ){
         if(transformMatrix.length>9){
@@ -59,11 +69,11 @@ $.fn.skew = function(xAngle,yAngle){
 }
 
 
-
-
-
+/*************************************************************************
+ *  插件定义的3维矩阵和4维矩阵，及其相关方法
+ *************************************************************************/
 /**
- * 3维矩阵
+ * 3维矩阵，用来表示2D变换
  * @param matrix 矩阵
  * @constructor
  */
@@ -72,6 +82,16 @@ var Matrix3 = function(matrix){
            [1,0,0,
             0,1,0,
             0,0,1];
+    /*
+    下面各个属性用来记录2D变换的结果
+     */
+    this.rotateAngle = 0;
+    this.skewX = 0;
+    this.skewY = 0;
+    this.translateX = 0;
+    this.translateY = 0;
+    this.scaleX = 1.0;
+    this.scaleY = 1.0;
     return this;
 }
 
@@ -104,13 +124,15 @@ Matrix3.prototype.multiply = function(item){
  * @returns {Matrix3}
  */
 Matrix3.prototype.rotate = function(angle){
-    var rad = angle/180*Math.PI;
+    var angleInc = angle - this.rotateAngle;   //计算差值
+    var rad = angleInc/180*Math.PI;
     var transformMatrix = new Matrix3([
         Math.cos(rad),-Math.sin(rad),0,
         Math.sin(rad),Math.cos(rad),0,
         0,0,1
     ]);
     this.multiply(transformMatrix);
+    this.rotateAngle = angle;
     return this;
 }
 
@@ -121,12 +143,16 @@ Matrix3.prototype.rotate = function(angle){
  * @returns {Matrix3}
  */
 Matrix3.prototype.translate = function(x,y){
+    var xInc = x - this.translateX;//计算差值
+    var yInc = y - this.translateY;
     var transformMatrix = new Matrix3([
-        1,0,x,
-        0,1,y,
+        1,0,xInc,
+        0,1,yInc,
         0,0,1
     ]);
     this.multiply(transformMatrix);
+    this.translateX = x;
+    this.translateY = y;
     return this;
 }
 
@@ -137,12 +163,16 @@ Matrix3.prototype.translate = function(x,y){
  * @returns {Matrix3}
  */
 Matrix3.prototype.scale = function(x,y){
+    var xInc = x/this.scaleX;
+    var yInc = y/this.scaleY;
     var transformMatrix = new Matrix3([
-        x,0,0,
-        0,y,0,
+        xInc,0,0,
+        0,yInc,0,
         0,0,1
     ]);
     this.multiply(transformMatrix);
+    this.scaleX = x;
+    this.scaleY = y;
     return this;
 }
 /**
@@ -152,19 +182,25 @@ Matrix3.prototype.scale = function(x,y){
  * @returns {Matrix3}
  */
 Matrix3.prototype.skew = function(xAngle,yAngle){
-    var xRad = xAngle/180*Math.PI;
-    var yRad = yAngle/180*Math.PI;
+    var xInc = xAngle - this.skewX;
+    var yInc = yAngle - this.skewY;
+    var xRad = xInc/180*Math.PI;
+    var yRad = yInc/180*Math.PI;
     var transformMatrix = new Matrix3([
         1,Math.tan(xRad),0,
         Math.tan(yRad),1,0,
         0,0,1
     ]);
     this.multiply(transformMatrix);
+    this.skewX = xAngle;
+    this.skewY = yAngle;
     return this;
 }
 
-
-
+/**
+ * 将矩阵转化成transform字符串
+ * @returns {string}
+ */
 Matrix3.prototype.toTansformString = function(){
     var matrix = this.matrix;
     var str = "matrix("+matrix[0]+","+matrix[3]+", "+matrix[1]+","+matrix[4]+", "+matrix[2]+","+matrix[5]+")"
@@ -185,11 +221,14 @@ var Matrix4 = function(matrix){
     return this;
 }
 
-
-/************************
+/*************************************************************************
  * 帮助函数
- ************************/
-
+ *************************************************************************/
+/**
+ * 提取元素的transform矩阵
+ * @param dom
+ * @returns {*}
+ */
 function getDOMElementTransformMatrix(dom){
     let transform = dom.css('transform');
     let leftParent = transform.indexOf('(');
@@ -203,9 +242,18 @@ function getDOMElementTransformMatrix(dom){
         v = v.toString().replace(" ","");
         matrix[i] = +v;
     });
-    return [
-        matrix[0],matrix[2],matrix[4],
-        matrix[1],matrix[3],matrix[5],
-        0,0,1
-    ];
+    if(matrix.length == 6){   //三维矩阵
+        return [
+            matrix[0],matrix[2],matrix[4],
+            matrix[1],matrix[3],matrix[5],
+            0,0,1
+        ];
+    }else{             //四维矩阵
+        return [
+            matrix[0],matrix[2],matrix[4],
+            matrix[1],matrix[3],matrix[5],
+            0,0,1
+        ];
+    }
+
 }
