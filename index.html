@@ -6,6 +6,11 @@
     <script src="http://static.outsidelook.cn/js/lib/jquery/jquery-3.1.0.js"></script>
     <script src="css3-v0.2.js"></script>
     <style>
+        .container{
+            perspective: 500px;
+            width:1000px;
+            height:1000px;
+        }
         .box{
             width:200px;
             height:100px;
@@ -13,7 +18,6 @@
             background: #ccc;
 			border:1px solid #ccc;
 			margin:2px;
-            transform:translate(100px,200px);
         }
         .box:hover{
             border:2px dotted #ff0000;
@@ -21,6 +25,10 @@
     </style>
 </head>
 <body>
+
+   <div class="container">
+
+   </div>
 
 <script>
     /**
@@ -34,17 +42,20 @@
         for(var i =0;i<num;i++){
             domFragment.appendChild(div.cloneNode(true));
         }
-        document.body.appendChild(domFragment);
+        $(".container").append(domFragment);
     }
     createBox(1)
 </script>
 
  <script>
      var boxs = $('.box');
-//     boxs.rotate(15);
-//     boxs.scale(1,3);
-//     boxs.translate(0,10);
-     boxs.skew(0,15);
+     boxs.translate3d(500,500,0);
+     var angle = 0.1;
+     function render(){
+         requestAnimationFrame(render);
+         boxs.rotate(1,1,1,angle);
+     }
+     render();
 
  </script>
 
