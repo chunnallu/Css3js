@@ -4,27 +4,50 @@
     <meta charset="UTF-8">
     <title>css3js测试</title>
     <script src="http://static.outsidelook.cn/js/lib/jquery/jquery-3.1.0.js"></script>
-    <script src="css3-v0.2.js"></script>
+    <script src="css3-v0.3.js"></script>
     <style>
+        html,body{
+            height:100%;
+            width:100%;
+            box-sizing: border-box;
+            margin:0;
+            padding:0;
+        }
         .container{
             perspective: 500px;
-            width:1000px;
-            height:1000px;
+            width:100%;
+            height:100%;
+            background: #111;
         }
         .box{
-            width:200px;
+            width:100px;
             height:100px;
             position: relative;
-            background: #ccc;
-			border:1px solid #ccc;
+            background: url(planet.png) no-repeat;
+            background-size: 100% 100%;
 			margin:2px;
         }
-        .box:hover{
-            border:2px dotted #ff0000;
+        .messageBox{
+            position:absolute;
+            left:50px;
+            top:20px;
+            height:100px;
+            padding:10px;
+           z-index:1000;
+        }
+        .messageBox a{
+            font-size: 24px;
+            color:#fff;
+            margin:0 10px;
         }
     </style>
 </head>
 <body>
+   <div class="messageBox">
+       <a href="http://static.outsidelook.cn/my/projects/css3js/0.3/index.html">css3js</a>
+       <a href="http://static.outsidelook.cn/my/projects/css3js/0.3/css3-v0.3.js">下载</a>
+       <a href="https://github.com/chunnallu/Css3js" target="_blank">github</a>
+   </div>
 
    <div class="container">
 
@@ -49,11 +72,14 @@
 
  <script>
      var boxs = $('.box');
-     boxs.translate3d(500,500,0);
-     var angle = 0.1;
+     var angle = 0;
+     var r = 300;
      function render(){
          requestAnimationFrame(render);
-         boxs.rotate(1,1,1,angle);
+         var x = 600+r*Math.sin(angle);
+         var z = r*Math.cos(angle);
+         boxs.translate3d(x,500,z);
+         angle += 0.01;
      }
      render();
 
